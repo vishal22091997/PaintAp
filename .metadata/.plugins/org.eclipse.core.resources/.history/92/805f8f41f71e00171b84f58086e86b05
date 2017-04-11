@@ -1,0 +1,11 @@
+package testing;
+
+import java.awt.Color;
+import java.awt.Point;
+
+public class Eraser {
+	private Color color;
+	private Point corner;
+	private int rad;
+
+}

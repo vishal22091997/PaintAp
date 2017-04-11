@@ -7,9 +7,11 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
@@ -19,6 +21,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +39,9 @@ import javax.swing.JColorChooser;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
@@ -62,11 +67,19 @@ public class PaintingTest{
 	private int strokeVal;
 	private JButton curBut;
 	private Color back = Color.BLACK;
+	private List<Eraser> erase = new ArrayList<Eraser>();
+	private int eStroke = 40;
+	private Color backColor = Color.BLACK;
+	private List<Integer> temp = new ArrayList<Integer>();
+	private List<Integer> temp2 = new ArrayList<Integer>();
+	
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		 
 		new PaintingTest();
+		
 	}
 	
 	//1 line
@@ -75,14 +88,15 @@ public class PaintingTest{
 	//4. rect
 	//5. currect
 	//6. tri
+	//7. textArea
 	
-	
-	
+	//8. erraser
 	
 	/**
 	 * Create the application.
 	 */
 	public PaintingTest() {
+		temp2.add(0);
 		initialize();
 	}
 
@@ -124,6 +138,15 @@ public class PaintingTest{
 		textBut.setBackground(Color.WHITE);
 		textBut.setIcon(new ImageIcon(PaintingTest.class.getResource("/testing/19489-200.png")));
 		panel_3.add(textBut);
+		
+		JButton btnEraser = new JButton("Eraser");
+		btnEraser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				cur = 8;
+				temp.add(draws.size());
+			}
+		});
+		panel_3.add(btnEraser);
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBackground(Color.WHITE);
@@ -265,7 +288,8 @@ public class PaintingTest{
 		
 		frame.setVisible(true);
 	}
-	private class Drawing extends JPanel implements ActionListener{
+	private Point curP = null;
+	private class Drawing extends JPanel {
 		private Point start = null;
 		private Point end = null;
 		List<Point> points = new ArrayList<Point>();
@@ -275,7 +299,23 @@ public class PaintingTest{
 			super.paint(g);
 			
 			Graphics2D graph = (Graphics2D)g;
-			for(Stack s: draws){
+			
+			
+			 
+			for(int i=0,k=0 ,j=draws.size();i<j;i++){
+				if(temp.size()>k){
+					if(i==temp.get(k)){
+						for(int x = temp2.get(k);erase.size()-x>0;x++){
+							Eraser eraser = erase.get(x);
+							Shape ellipse = new Ellipse2D.Double(eraser.getCorner().getX()-eraser.getRad()/2, eraser.getCorner().getY()-eraser.getRad()/2, eraser.getRad(), eraser.getRad());
+							graph.setColor(eraser.getColor());
+							graph.fill(ellipse);
+							graph.setColor(curColor);
+						}
+						k++;
+					}
+				}
+				Stack s = draws.get(i);
 				Shape shape = s.getShape();
 				graph.setColor(s.getColor());
 				graph.setStroke(s.getStroke());
@@ -285,71 +325,69 @@ public class PaintingTest{
 					graph.draw(shape);	
 				}
 				
-				 
 			}
 			for(JComponent comp:comps){
 				this.add(comp);
 			}
-		}
-		private int pressed = 0;
-		public Drawing(){
-			this.setBackground(Color.black);
-			Insets insets = this.getInsets();
 			
+			if(!erase.isEmpty()){
+				for(Eraser eraser: erase){
+					Shape ellipse = new Ellipse2D.Double(eraser.getCorner().getX()-eraser.getRad()/2, eraser.getCorner().getY()-eraser.getRad()/2, eraser.getRad(), eraser.getRad());
+					graph.setColor(eraser.getColor());
+					graph.fill(ellipse);
+					graph.setColor(curColor);
+				}
+			}
+			if(cur==8){
+				Point cen = curP.getLocation();
+				Shape cir = new Ellipse2D.Double(cen.getX()-30, cen.getY()-30, 60, 60);
+				graph.setPaint(Color.yellow);
+				graph.fill(cir);
+				graph.setColor(curColor);
+				
+			}
+			
+			
+		}
+		boolean placed = false;
+		public Drawing(){
+			this.setBackground(Color.WHITE);
+			Insets insets = this.getInsets();
+			this.setLayout(new FlowLayout());
+			 
 			this.addMouseListener(new MouseAdapter() {
+				
 				public void mousePressed(MouseEvent m){
-					System.out.println("mouse");
+					 
 					Point p = m.getPoint();
 					start = p;
-					
-					if(cur==7&&pressed%2==0){
-						
-						JTextField label = new JTextField("Edit Here");
-						Dimension dim = label.getPreferredSize();
-						label.setBounds((int)start.getX(), (int)start.getY(),dim.width , dim.height);
-						
-						
-						
-						label.addKeyListener(new KeyListener() {
-							
-							@Override
-							public void keyTyped(KeyEvent e) {
-								// TODO Auto-generated method stub
-								
-								
-							}
-							
-							@Override
-							public void keyReleased(KeyEvent e) {
-								// TODO Auto-generated method stub
-								 System.out.println("Released");
-							}
-							
-							@Override
-							public void keyPressed(KeyEvent e) {
-								// TODO Auto-generated method stub
-								System.out.println("Pressed");
-							}
-						});
-						
-						comps.add(label);
-						repaint();
-						
-					}
-					if(cur==7&&pressed%2!=0){
-						JTextField last = (JTextField)(comps.get(comps.size()-1));
-						last.setBackground(back);
-						
-					}
-					
-					
-					
-					pressed +=1;
 					 
 				}public void mouseReleased(MouseEvent m){
 					Point p = m.getPoint();
 					end = p;
-					addDraws();
+					
+					if(cur==7&&!placed){
+						placed = true;
+						System.out.println("Entered");
+						JTextArea area = new JTextArea(5,5);
+						JScrollPane pane = new JScrollPane(area);
+						
+						Rectangle rec = makeRect();
+						System.out.println(rec);
+						 
+						pane.setBounds(rec);
+						area.setEditable(true);
+						pane.setBackground(Color.RED);
+						area.setLineWrap(true);
+						area.setWrapStyleWord(true);
+						comps.add(pane);
+						repaint();
+						 
+					}else{
+						 
+							addDraws();
+							
+					}
 					repaint();
 				}
 				
@@ -360,18 +398,33 @@ public class PaintingTest{
 				@Override
 				public void mouseMoved(MouseEvent e) {
 					// TODO Auto-generated method stub
+					curP = e.getPoint();
+					if(cur==8){
+						System.out.println("moving");
+						repaint();
+					}
 					 
 				}
 				
 				@Override
 				public void mouseDragged(MouseEvent e) {
 					// TODO Auto-generated method stub
-					 
+					curP = e.getPoint();
 					if(cur==3){
+						 
 						Point p = e.getPoint();
 						points.add(p);
+						
+						
+					}
+					if(cur==8){
+						Eraser eraser = new Eraser(Color.WHITE, curP	, eStroke);
+						erase.add(eraser);
+						
 						repaint();
 					}
+					repaint();
+					 
 				}
 			});
 			
@@ -428,6 +481,15 @@ public class PaintingTest{
 			}
 			return null;
 		}
+		private Rectangle  makeRect(){
+			int  x = (int) Math.min(start.getX(), end.getX());
+			int y = (int) Math.min(start.getY(), end.getY());
+			int width = (int) Math.abs(start.getX()-end.getX());
+			int height = (int) Math.abs(start.getY()-end.getY());
+			Rectangle rec = new Rectangle(x, y, width, height);
+			return rec;
+			
+		}
 		private Shape makeTri(Point start, Point end){
 			int x3 = 0,x2 = (int)end.getX(), x1 = (int)start.getX() ; 
 			int y3 = 0, y2 = (int)end.getY(), y1 = (int)start.getY() ;
@@ -450,11 +512,7 @@ public class PaintingTest{
 			return s;
 				
 		}
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-	 
+		 
+		 
 	}
 }
