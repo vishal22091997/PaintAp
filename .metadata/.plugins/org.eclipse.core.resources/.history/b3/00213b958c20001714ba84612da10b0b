@@ -66,7 +66,7 @@ public class PaintingTest{
 	private boolean fillStroke;
 	private int strokeVal;
 	private JButton curBut;
-	 
+	private Color back = Color.BLACK;
 	 
 	private int eStroke = 40;
 	private Color backColor = Color.WHITE;
@@ -334,7 +334,7 @@ public class PaintingTest{
 		}
 		 
 		public Drawing(){
-			this.setBackground(backColor);
+			this.setBackground(Color.WHITE);
 			 
 			/////key Listener is going to come after this line
 			
@@ -349,13 +349,13 @@ public class PaintingTest{
 				@Override
 				public void keyReleased(KeyEvent e) {
 					// TODO Auto-generated method stub
-					System.out.println("Typed");
+					
 				}
 				
 				@Override
 				public void keyPressed(KeyEvent e) {
 					// TODO Auto-generated method stub
-					System.out.println("Typed");
+					
 				}
 			});
 			
