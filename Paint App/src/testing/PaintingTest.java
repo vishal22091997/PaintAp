@@ -60,19 +60,18 @@ import javax.swing.JPasswordField;
 public class PaintingTest{
 	private int cur = 1;
 	private JFrame frame;
-	private List<Stack> draws = new ArrayList<Stack>();
+	
 	private List<JComponent> comps = new ArrayList<JComponent>();
 	private Color curColor;
 	private boolean fillStroke;
 	private int strokeVal;
 	private JButton curBut;
 	private Color back = Color.BLACK;
-	private List<Eraser> erase = new ArrayList<Eraser>();
+	 
 	private int eStroke = 40;
-	private Color backColor = Color.BLACK;
-	private List<Integer> temp = new ArrayList<Integer>();
-	private List<Integer> temp2 = new ArrayList<Integer>();
-	
+	private Color backColor = Color.WHITE;
+ 
+	private List<Stack> draws = new ArrayList<Stack>();
 	/**
 	 * Launch the application.
 	 */
@@ -96,7 +95,7 @@ public class PaintingTest{
 	 * Create the application.
 	 */
 	public PaintingTest() {
-		temp2.add(0);
+		 
 		initialize();
 	}
 
@@ -139,11 +138,15 @@ public class PaintingTest{
 		textBut.setIcon(new ImageIcon(PaintingTest.class.getResource("/testing/19489-200.png")));
 		panel_3.add(textBut);
 		
-		JButton btnEraser = new JButton("Eraser");
+		JButton btnEraser = new JButton("");
+		btnEraser.setIcon(new ImageIcon(PaintingTest.class.getResource("/testing/Eraser-icon.png")));
+		btnEraser.setMargin(new Insets(0, 0, 0, 0));
+		btnEraser.setBackground(Color.white);
 		btnEraser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				cur = 8;
-				temp.add(draws.size());
+				changeBack(btnEraser);
+				 
 			}
 		});
 		panel_3.add(btnEraser);
@@ -299,44 +302,24 @@ public class PaintingTest{
 			super.paint(g);
 			
 			Graphics2D graph = (Graphics2D)g;
-			
-			
-			 
-			for(int i=0,k=0 ,j=draws.size();i<j;i++){
-				if(temp.size()>k){
-					if(i==temp.get(k)){
-						for(int x = temp2.get(k);erase.size()-x>0;x++){
-							Eraser eraser = erase.get(x);
-							Shape ellipse = new Ellipse2D.Double(eraser.getCorner().getX()-eraser.getRad()/2, eraser.getCorner().getY()-eraser.getRad()/2, eraser.getRad(), eraser.getRad());
-							graph.setColor(eraser.getColor());
-							graph.fill(ellipse);
-							graph.setColor(curColor);
-						}
-						k++;
-					}
-				}
+			for(int i=0,j=draws.size();i<j;i++){
 				Stack s = draws.get(i);
 				Shape shape = s.getShape();
-				graph.setColor(s.getColor());
+				
 				graph.setStroke(s.getStroke());
+				if(s.getType()==8){
+					graph.setColor(backColor);
+				}else{
+					graph.setColor(s.getColor());
+				}
 				if(s.isFill()){
+					
 					graph.fill(shape);
 				}else{
 					graph.draw(shape);	
 				}
-				
-			}
-			for(JComponent comp:comps){
-				this.add(comp);
-			}
+				graph.setColor(curColor);
 			
-			if(!erase.isEmpty()){
-				for(Eraser eraser: erase){
-					Shape ellipse = new Ellipse2D.Double(eraser.getCorner().getX()-eraser.getRad()/2, eraser.getCorner().getY()-eraser.getRad()/2, eraser.getRad(), eraser.getRad());
-					graph.setColor(eraser.getColor());
-					graph.fill(ellipse);
-					graph.setColor(curColor);
-				}
 			}
 			if(cur==8){
 				Point cen = curP.getLocation();
@@ -349,10 +332,10 @@ public class PaintingTest{
 			
 			
 		}
-		boolean placed = false;
+		 
 		public Drawing(){
 			this.setBackground(Color.WHITE);
-			Insets insets = this.getInsets();
+			 
 			this.setLayout(new FlowLayout());
 			 
 			this.addMouseListener(new MouseAdapter() {
@@ -366,28 +349,8 @@ public class PaintingTest{
 					Point p = m.getPoint();
 					end = p;
 					
-					if(cur==7&&!placed){
-						placed = true;
-						System.out.println("Entered");
-						JTextArea area = new JTextArea(5,5);
-						JScrollPane pane = new JScrollPane(area);
-						
-						Rectangle rec = makeRect();
-						System.out.println(rec);
-						 
-						pane.setBounds(rec);
-						area.setEditable(true);
-						pane.setBackground(Color.RED);
-						area.setLineWrap(true);
-						area.setWrapStyleWord(true);
-						comps.add(pane);
-						repaint();
-						 
-					}else{
-						 
-							addDraws();
-							
-					}
+					addDraws();
+					
 					repaint();
 				}
 				
@@ -418,8 +381,9 @@ public class PaintingTest{
 						
 					}
 					if(cur==8){
-						Eraser eraser = new Eraser(Color.WHITE, curP	, eStroke);
-						erase.add(eraser);
+						Shape ellipse = new Ellipse2D.Double(curP.getX()-30, curP.getY()-30, 60, 60);
+						Stack s = new Stack(8, ellipse, backColor, true	, new BasicStroke(10));
+						draws.add(s);
 						
 						repaint();
 					}
