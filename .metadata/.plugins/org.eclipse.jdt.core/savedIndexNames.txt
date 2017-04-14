@@ -1,8 +1,4 @@
 INDEX VERSION 1.130+C:\Users\vishal\workspace\PaintAp\.metadata\.plugins\org.eclipse.jdt.core
-<<<<<<< HEAD
-2690879219.index
-2640601120.index
-=======
 1841280308.index
 1475717011.index
 1199826107.index
@@ -19,7 +15,7 @@ INDEX VERSION 1.130+C:\Users\vishal\workspace\PaintAp\.metadata\.plugins\org.ecl
 1539866187.index
 3643810303.index
 2221491804.index
+2640601120.index
 3726721386.index
 843494433.index
 543038442.index
->>>>>>> parent of ff405a1... Added Little Messy Work

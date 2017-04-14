@@ -7,9 +7,11 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
@@ -19,6 +21,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +39,9 @@ import javax.swing.JColorChooser;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
@@ -57,25 +62,23 @@ public class PaintingTest{
 	private JFrame frame;
 	
 	private List<JComponent> comps = new ArrayList<JComponent>();
-	private Color curColor;
+	private Color curColor = Color.BLACK;
 	private boolean fillStroke;
 	private int strokeVal;
-	private JButton curBut;
-<<<<<<< HEAD
+	private JButton curBut ;
 	 
 	 
 	private int eStroke = 40;
 	private Color backColor = Color.WHITE;
  
 	private List<Stack> draws = new ArrayList<Stack>();
-=======
-	private Color back = Color.BLACK;
->>>>>>> parent of ff405a1... Added Little Messy Work
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		 
 		new PaintingTest();
+		
 	}
 	
 	//1 line
@@ -84,18 +87,15 @@ public class PaintingTest{
 	//4. rect
 	//5. currect
 	//6. tri
+	//7. textArea
 	
-	
-	
+	//8. erraser
 	
 	/**
 	 * Create the application.
 	 */
 	public PaintingTest() {
-<<<<<<< HEAD
 		 
-=======
->>>>>>> parent of ff405a1... Added Little Messy Work
 		initialize();
 	}
 
@@ -114,7 +114,9 @@ public class PaintingTest{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
-		frame.getContentPane().add(new Drawing(), BorderLayout.CENTER);
+		Drawing drawingClass = new Drawing();
+		
+		frame.getContentPane().add(drawingClass, BorderLayout.CENTER);
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.WHITE);
@@ -129,16 +131,15 @@ public class PaintingTest{
 		textBut.setMargin(new Insets(0,0,0,0));
 		textBut.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				if(!curBut.equals(textBut))
+					changeBack(textBut);
 				cur = 7;
-				changeBack(textBut);
-				
 			}
 		});
 		textBut.setBackground(Color.WHITE);
 		textBut.setIcon(new ImageIcon(PaintingTest.class.getResource("/testing/19489-200.png")));
 		panel_3.add(textBut);
 		
-<<<<<<< HEAD
 		JButton btnEraser = new JButton("");
 		btnEraser.setIcon(new ImageIcon(PaintingTest.class.getResource("/testing/Eraser-icon.png")));
 		btnEraser.setMargin(new Insets(0, 0, 0, 0));
@@ -146,14 +147,13 @@ public class PaintingTest{
 		btnEraser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				cur = 8;
-				changeBack(btnEraser);
+				if(!curBut.equals(btnEraser))
+					changeBack(btnEraser);
 				 
 			}
 		});
 		panel_3.add(btnEraser);
 		
-=======
->>>>>>> parent of ff405a1... Added Little Messy Work
 		JPanel panel_2 = new JPanel();
 		panel_2.setBackground(Color.WHITE);
 		panel.add(panel_2);
@@ -164,7 +164,8 @@ public class PaintingTest{
 		rect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				cur = 4;
-				changeBack(rect);
+				if(!curBut.equals(rect))
+					changeBack(rect);
 			}
 		});
 		panel_2.add(rect);
@@ -176,7 +177,8 @@ public class PaintingTest{
 		currect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				cur = 5;
-				changeBack(currect);
+				if(!curBut.equals(rect))
+					changeBack(currect);
 			}
 		});
 		JButton tri = new JButton("");
@@ -186,7 +188,8 @@ public class PaintingTest{
 		tri.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				cur = 6;
-				changeBack(tri);
+				if(!curBut.equals(rect))
+					changeBack(tri);
 			}
 		});
 		tri.setMargin(new Insets(0,0,0,0));
@@ -201,11 +204,12 @@ public class PaintingTest{
 		line.setBackground(Color.LIGHT_GRAY);
 		line.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				changeBack(line);
+				if(!curBut.equals(rect))
+					changeBack(line);
 				cur = 1;
 			}
 		});
-		curBut = line;
+		
 		
 		JButton ellipse = new JButton("");
 		panel_2.add(ellipse);
@@ -226,11 +230,12 @@ public class PaintingTest{
 		});
 		ellipse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(curBut!=ellipse)
 				changeBack(ellipse);
 				cur = 2;
 			}
 		});
-		
+		curBut = line;
 		JButton btnNewButton_3 = new JButton("");
 		btnNewButton_3.setMargin(new Insets(0,0,0,0));
 		btnNewButton_3.setIcon(new ImageIcon(PaintingTest.class.getResource("/testing/color_wheel.png")));
@@ -289,12 +294,34 @@ public class PaintingTest{
 		});
 		JPanel panel_1 = new JPanel();
 		frame.getContentPane().add(panel_1, BorderLayout.SOUTH);
-		
+		frame.setFocusable(true);
+		frame.requestFocusInWindow();
+		frame.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent k) {
+				// TODO Auto-generated method stub
+				 
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+				 
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent k) {
+				// TODO Auto-generated method stub
+				System.out.println(k.getKeyChar());
+			}
+		});
 		 
 		
 		frame.setVisible(true);
 	}
-	private class Drawing extends JPanel implements ActionListener{
+	private Point curP = null;
+	private class Drawing extends JPanel {
 		private Point start = null;
 		private Point end = null;
 		List<Point> points = new ArrayList<Point>();
@@ -304,17 +331,13 @@ public class PaintingTest{
 			super.paint(g);
 			
 			Graphics2D graph = (Graphics2D)g;
-<<<<<<< HEAD
 			for(int i=0,j=draws.size();i<j;i++){
 				Stack s = draws.get(i);
-=======
-			for(Stack s: draws){
->>>>>>> parent of ff405a1... Added Little Messy Work
 				Shape shape = s.getShape();
 				
 				graph.setStroke(s.getStroke());
 				if(s.getType()==8){
-					graph.setColor(backColor);
+					graph.setColor(Color.white);
 				}else{
 					graph.setColor(s.getColor());
 				}
@@ -324,8 +347,7 @@ public class PaintingTest{
 				}else{
 					graph.draw(shape);	
 				}
-<<<<<<< HEAD
-				graph.setColor(curColor);
+				 
 			
 			}
 			if(cur==8){
@@ -344,104 +366,45 @@ public class PaintingTest{
 			this.setBackground(backColor);
 			 
 			/////key Listener is going to come after this line
-			
+			this.setFocusable(true);
+			this.requestFocusInWindow();
 			this.addKeyListener(new KeyListener() {
-				
+		 
 				@Override
 				public void keyTyped(KeyEvent e) {
 					// TODO Auto-generated method stub
-					System.out.println("Typed");
+					System.out.println("NJjkjmsa");
 				}
 				
 				@Override
 				public void keyReleased(KeyEvent e) {
 					// TODO Auto-generated method stub
-					System.out.println("Typed");
+					
 				}
 				
 				@Override
 				public void keyPressed(KeyEvent e) {
 					// TODO Auto-generated method stub
-					System.out.println("Typed");
+					
 				}
 			});
 			
 			
 			this.setLayout(new FlowLayout());
 			 
-=======
-				
-				 
-			}
-			for(JComponent comp:comps){
-				this.add(comp);
-			}
-		}
-		private int pressed = 0;
-		public Drawing(){
-			this.setBackground(Color.black);
-			Insets insets = this.getInsets();
-			
->>>>>>> parent of ff405a1... Added Little Messy Work
 			this.addMouseListener(new MouseAdapter() {
+				
 				public void mousePressed(MouseEvent m){
-					System.out.println("mouse");
+					 
 					Point p = m.getPoint();
 					start = p;
-					
-<<<<<<< HEAD
-					addDraws();
-					
-=======
-					if(cur==7&&pressed%2==0){
-						
-						JTextField label = new JTextField("Edit Here");
-						Dimension dim = label.getPreferredSize();
-						label.setBounds((int)start.getX(), (int)start.getY(),dim.width , dim.height);
-						
-						
-						
-						label.addKeyListener(new KeyListener() {
-							
-							@Override
-							public void keyTyped(KeyEvent e) {
-								// TODO Auto-generated method stub
-								
-								
-							}
-							
-							@Override
-							public void keyReleased(KeyEvent e) {
-								// TODO Auto-generated method stub
-								 System.out.println("Released");
-							}
-							
-							@Override
-							public void keyPressed(KeyEvent e) {
-								// TODO Auto-generated method stub
-								System.out.println("Pressed");
-							}
-						});
-						
-						comps.add(label);
-						repaint();
-						
-					}
-					if(cur==7&&pressed%2!=0){
-						JTextField last = (JTextField)(comps.get(comps.size()-1));
-						last.setBackground(back);
-						
-					}
-					
-					
-					
-					pressed +=1;
 					 
 				}public void mouseReleased(MouseEvent m){
 					Point p = m.getPoint();
 					end = p;
+					
 					addDraws();
->>>>>>> parent of ff405a1... Added Little Messy Work
+					
 					repaint();
 				}
 				
@@ -452,17 +415,22 @@ public class PaintingTest{
 				@Override
 				public void mouseMoved(MouseEvent e) {
 					// TODO Auto-generated method stub
+					curP = e.getPoint();
+					if(cur==8){
+						System.out.println("moving");
+						repaint();
+					}
 					 
 				}
 				
 				@Override
 				public void mouseDragged(MouseEvent e) {
 					// TODO Auto-generated method stub
-					 
+					curP = e.getPoint();
 					if(cur==3){
+						 
 						Point p = e.getPoint();
 						points.add(p);
-<<<<<<< HEAD
 						
 						
 					}
@@ -471,10 +439,10 @@ public class PaintingTest{
 						Stack s = new Stack(8, ellipse, backColor, true	, new BasicStroke(10));
 						draws.add(s);
 						
-=======
->>>>>>> parent of ff405a1... Added Little Messy Work
 						repaint();
 					}
+					repaint();
+					 
 				}
 			});
 			
@@ -514,6 +482,7 @@ public class PaintingTest{
 				Stack obj = new Stack(cur, s, curColor, fillStroke, new BasicStroke(strokeVal));
 				draws.add(obj);
 			}
+			System.out.println(curColor.toString());
 		}
 		private Shape makeShape(Point start2, Point end2) {
 			// TODO Auto-generated method stub
@@ -530,6 +499,15 @@ public class PaintingTest{
 				return new RoundRectangle2D.Double(x, y, width, height,10,10);			
 			}
 			return null;
+		}
+		private Rectangle  makeRect(){
+			int  x = (int) Math.min(start.getX(), end.getX());
+			int y = (int) Math.min(start.getY(), end.getY());
+			int width = (int) Math.abs(start.getX()-end.getX());
+			int height = (int) Math.abs(start.getY()-end.getY());
+			Rectangle rec = new Rectangle(x, y, width, height);
+			return rec;
+			
 		}
 		private Shape makeTri(Point start, Point end){
 			int x3 = 0,x2 = (int)end.getX(), x1 = (int)start.getX() ; 
@@ -553,11 +531,7 @@ public class PaintingTest{
 			return s;
 				
 		}
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-	 
+		 
+		 
 	}
 }
