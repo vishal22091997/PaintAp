@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-# List of external plug-in models previously loaded. Timestamp: 1492113878269
-=======
-# List of external plug-in models previously loaded. Timestamp: 1491798250779
->>>>>>> parent of ff405a1... Added Little Messy Work
-=======
-# List of external plug-in models previously loaded. Timestamp: 1491798250779
->>>>>>> parent of ff405a1... Added Little Messy Work
+# List of external plug-in models previously loaded. Timestamp: 1492297418817
 file:/C:/Users/vishal/.p2/pool/plugins/ch.qos.logback.classic_1.0.7.v20121108-1250.jar
 file:/C:/Users/vishal/.p2/pool/plugins/ch.qos.logback.core_1.0.7.v20121108-1250.jar
 file:/C:/Users/vishal/.p2/pool/plugins/ch.qos.logback.slf4j_1.0.7.v201505121915.jar

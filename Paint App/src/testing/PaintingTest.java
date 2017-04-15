@@ -1,5 +1,6 @@
 package testing;
 
+import java.awt.AWTException;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -9,11 +10,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -23,6 +27,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -74,6 +79,7 @@ public class PaintingTest{
 	private Color backColor = Color.WHITE;
 	private Drawing drawingClass;
 	private List<Stack> draws = new ArrayList<Stack>();
+	private boolean undeco = false;
 	/**
 	 * Launch the application.
 	 */
@@ -111,6 +117,7 @@ public class PaintingTest{
 	}
 	private void initialize() {
 		frame = new JFrame();
+		 
 		frame.getContentPane().setBackground(Color.BLACK);
 		frame.setBounds(100, 100, 604, 449);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -122,7 +129,7 @@ public class PaintingTest{
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.WHITE);
-		frame.getContentPane().add(panel, BorderLayout.NORTH);
+		
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		JPanel panel_3 = new JPanel();
@@ -301,12 +308,12 @@ public class PaintingTest{
 		frame.getContentPane().add(panel_1, BorderLayout.SOUTH);
 		frame.setFocusable(true);
 		frame.requestFocusInWindow();
+		frame.getContentPane().add(panel, BorderLayout.NORTH);
 		frame.addKeyListener(new KeyListener() {
-			
 			@Override
 			public void keyReleased(KeyEvent arg0) {
 				// TODO Auto-generated method stub
-				  
+				keysPressed.clear();  
 				frame.requestFocusInWindow();
 				  
 			}
@@ -315,59 +322,96 @@ public class PaintingTest{
 			public void keyPressed(KeyEvent k) {
 				// TODO Auto-generated method stub
 				System.out.println(k.getKeyCode());
-				if(cur==8){
+				
 					if(keysPressed.size()>0){
 						Iterator<Integer> it = keysPressed.iterator();
 						int lastCode = it.next();
 						int curCode = k.getKeyCode();
-						 
+						char curChar = k.getKeyChar();
+						if(cur==8){
 						
-						if(lastCode==KeyEvent.VK_CONTROL&&curCode==107){
-							eStroke+=5;
+						
+							if(lastCode==KeyEvent.VK_CONTROL&&curCode==107){
+								eStroke+=5;
+								
+								drawingClass.repaint(); 
+								System.out.println("Ran");
+								 
+							}
+							if(lastCode==KeyEvent.VK_CONTROL&&curCode==109){
+								eStroke-=5;
+								
+								drawingClass.repaint(); 
+								System.out.println("Ran");
+								 
+							}
 							
-							drawingClass.repaint(); 
-							System.out.println("Ran");
-							 
 						}
-						if(lastCode==KeyEvent.VK_CONTROL&&curCode==109){
-							eStroke-=5;
-							
-							drawingClass.repaint(); 
-							System.out.println("Ran");
-							 
+						if(lastCode==KeyEvent.VK_CONTROL&&curCode==KeyEvent.VK_R){
+							System.out.println("Entered");
+							curColor = Color.RED;
+						}
+						else if(lastCode==KeyEvent.VK_CONTROL&&curCode==KeyEvent.VK_G){
+							System.out.println("Entered");
+							curColor = Color.GREEN;
+						}
+						else if(lastCode==KeyEvent.VK_CONTROL&&curCode==KeyEvent.VK_B){
+							System.out.println("Entered");
+							curColor = Color.BLUE;
+						}else if(lastCode==KeyEvent.VK_CONTROL&&curCode==KeyEvent.VK_T){
+							if(undeco==true){
+								 
+								frame.setOpacity(1f);
+								undeco = false;
+							}else{
+								 
+								frame.setOpacity(0.70f);
+								undeco = true;
+							}
 						}
 						 
 					}else{
 						keysPressed.add(k.getKeyCode());
 					}
-				}
+				
+				
+				
 			}
 
 			@Override
 			public void keyTyped(KeyEvent e) {
 				// TODO Auto-generated method stub
-				
+				 
 			}
 		});
 		 
 		
 		frame.setVisible(true);
 	}
-	private Point curP = null;
+	private Point curP = MouseInfo.getPointerInfo().getLocation();
 	private class Drawing extends JPanel  {
 		private Point start = null;
 		private Point end = null;
 		List<Point> points = new ArrayList<Point>();
+		BufferedImage background = null;
+	 
 		 
-		
 		
 		@Override
 		public void paintComponent(Graphics g) {
 			// TODO Auto-generated method stub
-			super.paintComponent(g) ;
 			
+			  
+			
+			 
+
+			
+			frame.setFocusable(true);
+			frame.requestFocusInWindow();
+	        super.paintComponent(g);
 			System.out.println(eStroke+" in paint");
 			Graphics2D graph = (Graphics2D)g;
+			 
 			for(int i=0,j=draws.size();i<j;i++){
 				Stack s = draws.get(i);
 				Shape shape = s.getShape();
@@ -395,6 +439,13 @@ public class PaintingTest{
 				graph.fill(cir);
 				graph.setColor(curColor);
 				
+			}else{
+				Point cen = curP.getLocation();
+				int dia = 6;
+				Shape cir = new Ellipse2D.Double(cen.getX()-dia/2, cen.getY()-dia/2, dia, dia);
+				graph.setPaint(curColor);
+				graph.fill(cir);
+				graph.setColor(curColor);
 			}
 			
 			
@@ -402,11 +453,12 @@ public class PaintingTest{
 		 
 		
 		public Drawing(){
-			this.setBackground(backColor);
+			 
+			this.setBackground(Color.black);
 			 
 			/////key Listener is going to come after this line
 			
-			 			
+			 		  
 			
 			this.setLayout(new FlowLayout());
 			 
@@ -443,7 +495,7 @@ public class PaintingTest{
 						new Drawing().setFocusable(true);
 						repaint();
 					}
-					 
+					repaint();
 				}
 				
 				@Override
