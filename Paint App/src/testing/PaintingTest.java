@@ -76,7 +76,7 @@ public class PaintingTest{
 	 
 	private Set<Integer> keysPressed = new HashSet<Integer>();
 	private int eStroke = 40;
-	private Color backColor = Color.WHITE;
+	private Color backColor = Color.BLACK;
 	private Drawing drawingClass;
 	private List<Stack> draws = new ArrayList<Stack>();
 	private boolean undeco = false;
@@ -272,22 +272,6 @@ public class PaintingTest{
 		ButtonGroup group = new ButtonGroup();
 		group.add(draw);
 		group.add(fill);
-		
-		JComboBox stroke = new JComboBox();
-		stroke.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent arg0) {
-				strokeVal = Integer.parseInt((String) stroke.getItemAt(stroke.getSelectedIndex()));
-			}
-		});
-		stroke.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				strokeVal = Integer.parseInt((String) stroke.getItemAt(stroke.getSelectedIndex()));
-				
-			}
-		});
-		stroke.setToolTipText("Select Stroke");
-		stroke.setModel(new DefaultComboBoxModel(new String[] {"2", "4", "6", "8", "10", "12", "14", "16", "18", "20"}));
-		panel.add(stroke);
 		draw.addActionListener(new ActionListener() {
 			
 			@Override
@@ -309,6 +293,24 @@ public class PaintingTest{
 		frame.setFocusable(true);
 		frame.requestFocusInWindow();
 		frame.getContentPane().add(panel, BorderLayout.NORTH);
+		
+		JComboBox stroke = new JComboBox();
+		stroke.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				stroke.getEditor();
+			}
+		});
+		stroke.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				strokeVal = Integer.parseInt(stroke.getSelectedItem().toString());
+			}
+		});
+		stroke.setEditable(true);
+		stroke.setModel(new DefaultComboBoxModel(new String[] {"6", "8", "10", "12", "14", "16", "18", "20"}));
+		panel.add(stroke);
 		frame.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent arg0) {
@@ -409,7 +411,7 @@ public class PaintingTest{
 			frame.setFocusable(true);
 			frame.requestFocusInWindow();
 	        super.paintComponent(g);
-			System.out.println(eStroke+" in paint");
+			
 			Graphics2D graph = (Graphics2D)g;
 			 
 			for(int i=0,j=draws.size();i<j;i++){
@@ -418,7 +420,7 @@ public class PaintingTest{
 				
 				graph.setStroke(s.getStroke());
 				if(s.getType()==8){
-					graph.setColor(Color.white);
+					graph.setColor(backColor);
 				}else{
 					graph.setColor(s.getColor());
 				}
@@ -454,7 +456,7 @@ public class PaintingTest{
 		
 		public Drawing(){
 			 
-			this.setBackground(Color.black);
+			this.setBackground(backColor);
 			 
 			/////key Listener is going to come after this line
 			
